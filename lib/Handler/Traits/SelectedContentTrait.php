@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Netgen\Layouts\Ez\RelationListQuery\Handler\Traits;
+namespace Netgen\Layouts\Ibexa\RelationListQuery\Handler\Traits;
 
-use eZ\Publish\API\Repository\LocationService;
-use eZ\Publish\API\Repository\Values\Content\Content;
+use Ibexa\Contracts\Core\Repository\LocationService;
+use Ibexa\Contracts\Core\Repository\Values\Content\Content;
 use Netgen\Layouts\API\Values\Collection\Query;
-use Netgen\Layouts\Ez\ContentProvider\ContentProviderInterface;
+use Netgen\Layouts\Ibexa\ContentProvider\ContentProviderInterface;
 use Throwable;
 
 trait SelectedContentTrait

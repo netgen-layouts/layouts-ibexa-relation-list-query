@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Netgen\Bundle\LayoutsEzPlatformRelationListQueryBundle\DependencyInjection;
+namespace Netgen\Bundle\LayoutsIbexaRelationListQueryBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Resource\FileResource;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Yaml\Yaml;
 use function file_get_contents;
 
-final class NetgenLayoutsEzPlatformRelationListQueryExtension extends Extension implements PrependExtensionInterface
+final class NetgenLayoutsIbexaRelationListQueryExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * @param mixed[] $configs

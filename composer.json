@@ -1,6 +1,6 @@
 {
-    "name": "netgen/layouts-ezplatform-relation-list-query",
-    "description": "Netgen Layouts query based on relation list field type for eZ Platform",
+    "name": "netgen/layouts-ibexa-relation-list-query",
+    "description": "Netgen Layouts query based on relation list field type for Ibexa Platform",
     "license": "GPL-2.0-only",
     "type": "symfony-bundle",
     "authors": [
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "netgen/layouts-ezplatform": "^1.3"
+        "netgen/layouts-ibexa": "^1.3"
     },
     "require-dev": {
         "netgen/layouts-coding-standard": "^2.0",
@@ -27,8 +27,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Netgen\\Layouts\\Ez\\RelationListQuery\\": "lib/",
-            "Netgen\\Bundle\\LayoutsEzPlatformRelationListQueryBundle\\": "bundle/"
+            "Netgen\\Layouts\\Ibexa\\RelationListQuery\\": "lib/",
+            "Netgen\\Bundle\\LayoutsIbexaRelationListQueryBundle\\": "bundle/"
         }
     },
     "minimum-stability": "dev",
