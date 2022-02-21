@@ -6,7 +6,7 @@ services:
             - "@netgen_layouts.ibexa.search_service"
             - "@netgen_layouts.ibexa.content_provider"
             - "@ibexa.config.resolver"
-            - "@ibexa.translation_helper"
+            - "@Ibexa\\Core\\Helper\\TranslationHelper"
         tags:
             - { name: netgen_layouts.query_type_handler, type: ibexa_content_relation_list }
 
