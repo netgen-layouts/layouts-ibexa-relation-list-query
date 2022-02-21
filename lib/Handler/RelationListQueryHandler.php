@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Netgen\Layouts\Ez\RelationListQuery\Handler;
+namespace Netgen\Layouts\Ibexa\RelationListQuery\Handler;
 
-use eZ\Publish\API\Repository\LocationService;
-use eZ\Publish\API\Repository\SearchService;
-use eZ\Publish\API\Repository\Values\Content\Location;
-use eZ\Publish\API\Repository\Values\Content\LocationQuery;
-use eZ\Publish\API\Repository\Values\Content\Query\Criterion;
-use eZ\Publish\API\Repository\Values\Content\Query\SortClause;
-use eZ\Publish\API\Repository\Values\Content\Search\SearchHit;
-use eZ\Publish\API\Repository\Values\ValueObject;
-use eZ\Publish\Core\FieldType\RelationList\Value as RelationListValue;
-use eZ\Publish\Core\Helper\TranslationHelper;
-use eZ\Publish\Core\MVC\ConfigResolverInterface;
+use Ibexa\Contracts\Core\Repository\LocationService;
+use Ibexa\Contracts\Core\Repository\SearchService;
+use Ibexa\Contracts\Core\Repository\Values\Content\Location;
+use Ibexa\Contracts\Core\Repository\Values\Content\LocationQuery;
+use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
+use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
+use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
+use Ibexa\Contracts\Core\Repository\Values\ValueObject;
+use Ibexa\Core\FieldType\RelationList\Value as RelationListValue;
+use Ibexa\Core\Helper\TranslationHelper;
+use Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface;
 use Netgen\Layouts\API\Values\Collection\Query;
 use Netgen\Layouts\Collection\QueryType\QueryTypeHandlerInterface;
-use Netgen\Layouts\Ez\ContentProvider\ContentProviderInterface;
-use Netgen\Layouts\Ez\Parameters\ParameterType as EzParameterType;
-use Netgen\Layouts\Ez\RelationListQuery\Handler\Traits\SelectedContentTrait;
+use Netgen\Layouts\Ibexa\ContentProvider\ContentProviderInterface;
+use Netgen\Layouts\Ibexa\Parameters\ParameterType as IbexaParameterType;
+use Netgen\Layouts\Ibexa\RelationListQuery\Handler\Traits\SelectedContentTrait;
 use Netgen\Layouts\Parameters\ParameterBuilderInterface;
 use Netgen\Layouts\Parameters\ParameterType;
 use function array_flip;
@@ -30,7 +30,7 @@ use function is_array;
 use function usort;
 
 /**
- * Query handler implementation providing values through eZ Platform relation list field.
+ * Query handler implementation providing values through Ibexa Platform relation list field.
  */
 final class RelationListQueryHandler implements QueryTypeHandlerInterface
 {
@@ -88,7 +88,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
 
         $builder->get('use_current_location')->add(
             'location_id',
-            EzParameterType\LocationType::class,
+            IbexaParameterType\LocationType::class,
             [
                 'allow_invalid' => true,
             ],
@@ -147,7 +147,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
 
         $builder->get('filter_by_content_type')->add(
             'content_types',
-            EzParameterType\ContentTypeType::class,
+            IbexaParameterType\ContentTypeType::class,
             [
                 'multiple' => true,
                 'groups' => [self::GROUP_ADVANCED],
@@ -189,7 +189,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
             ['languages' => $this->configResolver->getParameter('languages')],
         );
 
-        /** @var \eZ\Publish\API\Repository\Values\Content\Location[] $locations */
+        /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations */
         $locations = array_map(
             static fn (SearchHit $searchHit): ValueObject => $searchHit->valueObject,
             $searchResult->searchHits,
@@ -227,7 +227,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
      * Sort given $locations as defined by the given $relatedContentIds.
      *
      * @param int[]|string[] $relatedContentIds
-     * @param \eZ\Publish\API\Repository\Values\Content\Location[] $locations
+     * @param \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations
      */
     private function sortLocationsByField(
         array $relatedContentIds,
@@ -331,7 +331,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         }
 
         if ($sortType !== 'defined_by_field') {
-            /** @var \eZ\Publish\API\Repository\Values\Content\Query\SortClause $sortClause */
+            /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause $sortClause */
             $sortClause = new self::$sortClauses[$sortType]($sortDirection);
             $locationQuery->sortClauses = [$sortClause];
         }
