@@ -20,6 +20,7 @@ use Netgen\Layouts\Ibexa\Parameters\ParameterType as IbexaParameterType;
 use Netgen\Layouts\Ibexa\RelationListQuery\Handler\Traits\SelectedContentTrait;
 use Netgen\Layouts\Parameters\ParameterBuilderInterface;
 use Netgen\Layouts\Parameters\ParameterType;
+
 use function array_map;
 use function count;
 use function is_array;
