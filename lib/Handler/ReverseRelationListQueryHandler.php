@@ -26,7 +26,7 @@ use function count;
 use function is_array;
 
 /**
- * Query handler implementation providing values through Ibexa Platform reverse relation.
+ * Query handler implementation providing values through Ibexa CMS reverse relation.
  */
 final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
 {

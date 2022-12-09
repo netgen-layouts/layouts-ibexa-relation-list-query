@@ -31,7 +31,7 @@ use function is_array;
 use function usort;
 
 /**
- * Query handler implementation providing values through Ibexa Platform relation list field.
+ * Query handler implementation providing values through Ibexa CMS relation list field.
  */
 final class RelationListQueryHandler implements QueryTypeHandlerInterface
 {

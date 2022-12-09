@@ -1,7 +1,7 @@
-# Netgen Layouts query based on relation list field type for Ibexa Platform
+# Netgen Layouts query based on relation list field type for Ibexa CMS
 
 This bundle provides Netgen Layouts query that makes it possible to add items to
-block via relation list field type available in any content in Ibexa Platform
+block via relation list field type available in any content in Ibexa CMS
 CMS.
 
 ## Installation instructions
@@ -15,6 +15,6 @@ $ composer require netgen/layouts-ibexa-relation-list-query
 ```
 
 Due to how prepending configuration of other bundles works in Symfony, to make
-this query type display after the existing Ibexa Platform query type, you need
+this query type display after the existing Ibexa CMS query type, you need
 to add the bundle BEFORE `NetgenLayoutsIbexaBundle` in the list of activated
 bundles.
