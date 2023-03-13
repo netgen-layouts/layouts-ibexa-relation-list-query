@@ -12,7 +12,6 @@ use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
 use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
 use Ibexa\Contracts\Core\Repository\Values\ValueObject;
-use Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface;
 use Netgen\Layouts\API\Values\Collection\Query;
 use Netgen\Layouts\Collection\QueryType\QueryTypeHandlerInterface;
 use Netgen\Layouts\Ibexa\ContentProvider\ContentProviderInterface;
@@ -42,28 +41,20 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
         'content_name' => SortClause\ContentName::class,
     ];
 
-    private ContentService $contentService;
-
-    private SearchService $searchService;
-
-    private ConfigResolverInterface $configResolver;
-
     public function __construct(
         LocationService $locationService,
-        ContentService $contentService,
-        SearchService $searchService,
         ContentProviderInterface $contentProvider,
-        ConfigResolverInterface $configResolver
+        private ContentService $contentService,
+        private SearchService $searchService,
     ) {
-        $this->contentService = $contentService;
-        $this->searchService = $searchService;
-        $this->contentProvider = $contentProvider;
-        $this->configResolver = $configResolver;
-        $this->locationService = $locationService;
+        $this->setLocationService($locationService);
+        $this->setContentProvider($contentProvider);
     }
 
     public function buildParameters(ParameterBuilderInterface $builder): void
     {
+        $advancedGroup = [self::GROUP_ADVANCED];
+
         $builder->add(
             'use_current_location',
             ParameterType\Compound\BooleanType::class,
@@ -109,7 +100,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             'filter_by_content_type',
             ParameterType\Compound\BooleanType::class,
             [
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -118,7 +109,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             IbexaParameterType\ContentTypeType::class,
             [
                 'multiple' => true,
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -131,7 +122,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
                     'Include content types' => 'include',
                     'Exclude content types' => 'exclude',
                 ],
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -140,7 +131,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             ParameterType\TextLineType::class,
             [
                 'required' => false,
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -149,7 +140,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             ParameterType\BooleanType::class,
             [
                 'default_value' => true,
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
     }
@@ -168,10 +159,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
         // it can only be disabled if limit is not 0
         $locationQuery->performCount = $locationQuery->limit === 0;
 
-        $searchResult = $this->searchService->findLocations(
-            $locationQuery,
-            ['languages' => $this->configResolver->getParameter('languages')],
-        );
+        $searchResult = $this->searchService->findLocations($locationQuery);
 
         /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations */
         $locations = array_map(
@@ -184,20 +172,14 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
 
     public function getCount(Query $query): int
     {
-        $content = $this->getSelectedContent($query, $this->configResolver->getParameter('languages'));
-        if ($content === null) {
-            return 0;
-        }
+        $reverseRelatedContentIds = $this->getReverseRelatedContentIds($query);
 
-        $relatedContentIds = $this->getReverseRelatedContentIds($query);
-
-        if (count($relatedContentIds) === 0) {
+        if (count($reverseRelatedContentIds) === 0) {
             return 0;
         }
 
         $searchResult = $this->searchService->findLocations(
-            $this->buildLocationQuery($relatedContentIds, $query, true),
-            ['languages' => $this->configResolver->getParameter('languages')],
+            $this->buildLocationQuery($reverseRelatedContentIds, $query, true),
         );
 
         return $searchResult->totalCount ?? 0;
@@ -215,15 +197,15 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
      */
     private function getReverseRelatedContentIds(Query $query): array
     {
-        $content = $this->getSelectedContent($query, $this->configResolver->getParameter('languages'));
+        $content = $this->getSelectedContent($query);
 
         if ($content === null) {
             return [];
         }
 
-        $reverseRelations = $this->contentService->loadReverseRelations($content->contentInfo);
         $contentIds = [];
-        foreach ($reverseRelations as $relation) {
+
+        foreach ($this->contentService->loadReverseRelations($content->contentInfo) as $relation) {
             $contentIds[] = $relation->getSourceContentInfo()->id;
         }
 
@@ -240,7 +222,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
         Query $query,
         bool $buildCountQuery = false,
         int $offset = 0,
-        ?int $limit = null
+        ?int $limit = null,
     ): LocationQuery {
         $locationQuery = new LocationQuery();
         $sortType = $query->getParameter('sort_type')->getValue() ?? 'default';
@@ -271,7 +253,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             }
 
             $fieldDefinitionIdentifier = $query->getParameter('field_definition_identifier')->getValue();
-            $selectedContent = $this->getSelectedContent($query, $this->configResolver->getParameter('languages'));
+            $selectedContent = $this->getSelectedContent($query);
 
             if ($fieldDefinitionIdentifier !== null && $selectedContent !== null) {
                 $criteria[] = new Criterion\Field(

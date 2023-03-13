@@ -12,9 +12,7 @@ use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
 use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
 use Ibexa\Contracts\Core\Repository\Values\ValueObject;
-use Ibexa\Contracts\Core\SiteAccess\ConfigResolverInterface;
 use Ibexa\Core\FieldType\RelationList\Value as RelationListValue;
-use Ibexa\Core\Helper\TranslationHelper;
 use Netgen\Layouts\API\Values\Collection\Query;
 use Netgen\Layouts\Collection\QueryType\QueryTypeHandlerInterface;
 use Netgen\Layouts\Ibexa\ContentProvider\ContentProviderInterface;
@@ -57,28 +55,19 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         Location::SORT_FIELD_CONTENTOBJECT_ID => SortClause\ContentId::class,
     ];
 
-    private SearchService $searchService;
-
-    private ConfigResolverInterface $configResolver;
-
-    private TranslationHelper $translationHelper;
-
     public function __construct(
         LocationService $locationService,
-        SearchService $searchService,
         ContentProviderInterface $contentProvider,
-        ConfigResolverInterface $configResolver,
-        TranslationHelper $translationHelper
+        private SearchService $searchService,
     ) {
-        $this->locationService = $locationService;
-        $this->searchService = $searchService;
-        $this->contentProvider = $contentProvider;
-        $this->configResolver = $configResolver;
-        $this->translationHelper = $translationHelper;
+        $this->setLocationService($locationService);
+        $this->setContentProvider($contentProvider);
     }
 
     public function buildParameters(ParameterBuilderInterface $builder): void
     {
+        $advancedGroup = [self::GROUP_ADVANCED];
+
         $builder->add(
             'use_current_location',
             ParameterType\Compound\BooleanType::class,
@@ -134,7 +123,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
             ParameterType\BooleanType::class,
             [
                 'default_value' => true,
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -142,7 +131,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
             'filter_by_content_type',
             ParameterType\Compound\BooleanType::class,
             [
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -151,7 +140,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
             IbexaParameterType\ContentTypeType::class,
             [
                 'multiple' => true,
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
 
@@ -164,7 +153,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
                     'Include content types' => 'include',
                     'Exclude content types' => 'exclude',
                 ],
-                'groups' => [self::GROUP_ADVANCED],
+                'groups' => $advancedGroup,
             ],
         );
     }
@@ -185,10 +174,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         // it can only be disabled if limit is not 0
         $locationQuery->performCount = $locationQuery->limit === 0;
 
-        $searchResult = $this->searchService->findLocations(
-            $locationQuery,
-            ['languages' => $this->configResolver->getParameter('languages')],
-        );
+        $searchResult = $this->searchService->findLocations($locationQuery);
 
         /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations */
         $locations = array_map(
@@ -213,7 +199,6 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
 
         $searchResult = $this->searchService->findLocations(
             $this->buildLocationQuery($relatedContentIds, $query, true),
-            ['languages' => $this->configResolver->getParameter('languages')],
         );
 
         return $searchResult->totalCount ?? 0;
@@ -233,7 +218,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
     private function sortLocationsByField(
         array $relatedContentIds,
         array &$locations,
-        string $sortDirection
+        string $sortDirection,
     ): void {
         $sortMap = array_flip($relatedContentIds);
 
@@ -260,15 +245,13 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
      */
     private function getRelatedContentIds(Query $query): array
     {
-        $content = $this->getSelectedContent($query, $this->configResolver->getParameter('languages'));
+        $content = $this->getSelectedContent($query);
 
         if ($content === null) {
             return [];
         }
 
-        $fieldDefinitionIdentifier = $query->getParameter('field_definition_identifier')->getValue();
-        $field = $this->translationHelper->getTranslatedField($content, $fieldDefinitionIdentifier);
-
+        $field = $content->getField($query->getParameter('field_definition_identifier')->getValue());
         if ($field === null || !$field->value instanceof RelationListValue) {
             return [];
         }
@@ -286,7 +269,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         Query $query,
         bool $buildCountQuery = false,
         int $offset = 0,
-        ?int $limit = null
+        ?int $limit = null,
     ): LocationQuery {
         $locationQuery = new LocationQuery();
         $sortType = $query->getParameter('sort_type')->getValue() ?? 'default';

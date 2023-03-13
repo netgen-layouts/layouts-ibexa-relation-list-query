@@ -18,10 +18,8 @@ trait SelectedContentTrait
 
     /**
      * Returns the selected Content item.
-     *
-     * @param string[] $languages
      */
-    private function getSelectedContent(Query $query, ?array $languages = null): ?Content
+    private function getSelectedContent(Query $query): ?Content
     {
         if ($query->getParameter('use_current_location')->getValue() === true) {
             return $this->contentProvider->provideContent();
@@ -33,9 +31,19 @@ trait SelectedContentTrait
         }
 
         try {
-            return $this->locationService->loadLocation((int) $locationId, $languages)->getContent();
-        } catch (Throwable $t) {
+            return $this->locationService->loadLocation((int) $locationId)->getContent();
+        } catch (Throwable) {
             return null;
         }
+    }
+
+    private function setLocationService(LocationService $locationService): void
+    {
+        $this->locationService = $locationService;
+    }
+
+    private function setContentProvider(ContentProviderInterface $contentProvider): void
+    {
+        $this->contentProvider = $contentProvider;
     }
 }
