@@ -14,7 +14,7 @@
         "netgen/layouts-ibexa": "^2.0"
     },
     "require-dev": {
-        "netgen/layouts-coding-standard": "^2.0",
+        "netgen/layouts-coding-standard": "^3.0",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-strict-rules": "^2.0"
     },
