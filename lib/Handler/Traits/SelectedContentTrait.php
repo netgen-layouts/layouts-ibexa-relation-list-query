@@ -36,14 +36,4 @@ trait SelectedContentTrait
             return null;
         }
     }
-
-    private function setLocationService(LocationService $locationService): void
-    {
-        $this->locationService = $locationService;
-    }
-
-    private function setContentProvider(ContentProviderInterface $contentProvider): void
-    {
-        $this->contentProvider = $contentProvider;
-    }
 }

@@ -60,8 +60,8 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         ContentProviderInterface $contentProvider,
         private SearchService $searchService,
     ) {
-        $this->setLocationService($locationService);
-        $this->setContentProvider($contentProvider);
+        $this->locationService = $locationService;
+        $this->contentProvider = $contentProvider;
     }
 
     public function buildParameters(ParameterBuilderInterface $builder): void

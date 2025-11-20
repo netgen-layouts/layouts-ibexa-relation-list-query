@@ -8,6 +8,7 @@ use Ibexa\Contracts\Core\Repository\ContentService;
 use Ibexa\Contracts\Core\Repository\LocationService;
 use Ibexa\Contracts\Core\Repository\SearchService;
 use Ibexa\Contracts\Core\Repository\Values\Content\LocationQuery;
+use Ibexa\Contracts\Core\Repository\Values\Content\Query as IbexaQuery;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
 use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
@@ -47,8 +48,8 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
         private ContentService $contentService,
         private SearchService $searchService,
     ) {
-        $this->setLocationService($locationService);
-        $this->setContentProvider($contentProvider);
+        $this->locationService = $locationService;
+        $this->contentProvider = $contentProvider;
     }
 
     public function buildParameters(ParameterBuilderInterface $builder): void
@@ -90,8 +91,8 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             [
                 'required' => true,
                 'options' => [
-                    'Descending' => LocationQuery::SORT_DESC,
-                    'Ascending' => LocationQuery::SORT_ASC,
+                    'Descending' => IbexaQuery::SORT_DESC,
+                    'Ascending' => IbexaQuery::SORT_ASC,
                 ],
             ],
         );
@@ -226,7 +227,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
     ): LocationQuery {
         $locationQuery = new LocationQuery();
         $sortType = $query->getParameter('sort_type')->getValue() ?? 'default';
-        $sortDirection = $query->getParameter('sort_direction')->getValue() ?? LocationQuery::SORT_DESC;
+        $sortDirection = $query->getParameter('sort_direction')->getValue() ?? IbexaQuery::SORT_DESC;
 
         $criteria = [
             new Criterion\ContentId($reverseRelatedContentIds),
