@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^8.4",
-        "netgen/layouts-ibexa": "^1.4"
+        "netgen/layouts-ibexa": "^2.0"
     },
     "require-dev": {
         "netgen/layouts-coding-standard": "^2.0",
@@ -34,7 +34,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }
