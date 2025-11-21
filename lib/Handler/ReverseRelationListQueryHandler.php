@@ -11,8 +11,6 @@ use Ibexa\Contracts\Core\Repository\Values\Content\LocationQuery;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query as IbexaQuery;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
-use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
-use Ibexa\Contracts\Core\Repository\Values\ValueObject;
 use Netgen\Layouts\API\Values\Collection\Query;
 use Netgen\Layouts\Collection\QueryType\QueryTypeHandlerInterface;
 use Netgen\Layouts\Ibexa\ContentProvider\ContentProviderInterface;
@@ -21,7 +19,6 @@ use Netgen\Layouts\Ibexa\RelationListQuery\Handler\Traits\SelectedContentTrait;
 use Netgen\Layouts\Parameters\ParameterBuilderInterface;
 use Netgen\Layouts\Parameters\ParameterType;
 
-use function array_map;
 use function count;
 use function is_array;
 
@@ -162,13 +159,9 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
 
         $searchResult = $this->searchService->findLocations($locationQuery);
 
-        /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations */
-        $locations = array_map(
-            static fn (SearchHit $searchHit): ValueObject => $searchHit->valueObject,
-            $searchResult->searchHits,
-        );
-
-        return $locations;
+        foreach ($searchResult->searchHits as $searchHit) {
+            yield $searchHit->valueObject;
+        }
     }
 
     public function getCount(Query $query): int
