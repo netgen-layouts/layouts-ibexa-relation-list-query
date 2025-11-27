@@ -181,7 +181,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
 
     public function isContextual(Query $query): bool
     {
-        return $query->getParameter('use_current_location')->getValue() === true;
+        return $query->getParameter('use_current_location')->value === true;
     }
 
     /**
@@ -219,34 +219,34 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
         ?int $limit = null,
     ): LocationQuery {
         $locationQuery = new LocationQuery();
-        $sortType = $query->getParameter('sort_type')->getValue() ?? 'default';
-        $sortDirection = $query->getParameter('sort_direction')->getValue() ?? IbexaQuery::SORT_DESC;
+        $sortType = $query->getParameter('sort_type')->value ?? 'default';
+        $sortDirection = $query->getParameter('sort_direction')->value ?? IbexaQuery::SORT_DESC;
 
         $criteria = [
             new Criterion\ContentId($reverseRelatedContentIds),
             new Criterion\Visibility(Criterion\Visibility::VISIBLE),
         ];
 
-        if ($query->getParameter('only_main_locations')->getValue() === true) {
+        if ($query->getParameter('only_main_locations')->value === true) {
             $criteria[] = new Criterion\Location\IsMainLocation(
                 Criterion\Location\IsMainLocation::MAIN,
             );
         }
 
-        if ($query->getParameter('filter_by_content_type')->getValue() === true) {
+        if ($query->getParameter('filter_by_content_type')->value === true) {
             /** @var string[]|null $contentTypes */
-            $contentTypes = $query->getParameter('content_types')->getValue();
+            $contentTypes = $query->getParameter('content_types')->value;
             if (is_array($contentTypes) && count($contentTypes) > 0) {
                 $contentTypeFilter = new Criterion\ContentTypeIdentifier($contentTypes);
 
-                if ($query->getParameter('content_types_filter')->getValue() === 'exclude') {
+                if ($query->getParameter('content_types_filter')->value === 'exclude') {
                     $contentTypeFilter = new Criterion\LogicalNot($contentTypeFilter);
                 }
 
                 $criteria[] = $contentTypeFilter;
             }
 
-            $fieldDefinitionIdentifier = $query->getParameter('field_definition_identifier')->getValue();
+            $fieldDefinitionIdentifier = $query->getParameter('field_definition_identifier')->value;
             $selectedContent = $this->getSelectedContent($query);
 
             if ($fieldDefinitionIdentifier !== null && $selectedContent !== null) {

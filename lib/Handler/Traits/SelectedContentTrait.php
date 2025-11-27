@@ -21,11 +21,11 @@ trait SelectedContentTrait
      */
     private function getSelectedContent(Query $query): ?Content
     {
-        if ($query->getParameter('use_current_location')->getValue() === true) {
+        if ($query->getParameter('use_current_location')->value === true) {
             return $this->contentProvider->provideContent();
         }
 
-        $locationId = $query->getParameter('location_id')->getValue();
+        $locationId = $query->getParameter('location_id')->value;
         if ($locationId === null) {
             return null;
         }
