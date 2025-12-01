@@ -14,6 +14,8 @@ Run the following from your installation root to install the package:
 $ composer require netgen/layouts-ibexa-relation-list-query
 ```
 
+Symfony Flex will automatically enable the bundle.
+
 Due to how prepending configuration of other bundles works in Symfony, to make
 this query type display after the existing Ibexa CMS query type, you need
 to add the bundle BEFORE `NetgenLayoutsIbexaBundle` in the list of activated
