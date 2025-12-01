@@ -6,8 +6,6 @@ CMS.
 
 ## Installation instructions
 
-### Use Composer
-
 Run the following from your installation root to install the package:
 
 ```bash
