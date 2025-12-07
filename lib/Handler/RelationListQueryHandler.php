@@ -36,7 +36,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
     use SelectedContentTrait;
 
     /**
-     * @var class-string[]
+     * @var array<array-key, class-string<\Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause>>
      */
     private static array $sortClauses = [
         'default' => SortClause\DatePublished::class,
@@ -314,7 +314,6 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
         }
 
         if ($sortType !== 'defined_by_field') {
-            /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause $sortClause */
             $sortClause = new self::$sortClauses[$sortType]($sortDirection);
             $locationQuery->sortClauses = [$sortClause];
         }

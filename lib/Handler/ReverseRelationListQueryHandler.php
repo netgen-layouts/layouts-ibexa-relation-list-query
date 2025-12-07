@@ -30,7 +30,7 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
     use SelectedContentTrait;
 
     /**
-     * @var class-string[]
+     * @var array<string, class-string<\Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause>>
      */
     private static array $sortClauses = [
         'default' => SortClause\DatePublished::class,
@@ -268,7 +268,6 @@ final class ReverseRelationListQueryHandler implements QueryTypeHandlerInterface
             }
         }
 
-        /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause $sortClause */
         $sortClause = new self::$sortClauses[$sortType]($sortDirection);
         $locationQuery->sortClauses = [$sortClause];
 
