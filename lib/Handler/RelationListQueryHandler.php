@@ -12,7 +12,6 @@ use Ibexa\Contracts\Core\Repository\Values\Content\Query as IbexaQuery;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\Criterion;
 use Ibexa\Contracts\Core\Repository\Values\Content\Query\SortClause;
 use Ibexa\Contracts\Core\Repository\Values\Content\Search\SearchHit;
-use Ibexa\Contracts\Core\Repository\Values\ValueObject;
 use Ibexa\Core\FieldType\RelationList\Value as RelationListValue;
 use Netgen\Layouts\API\Values\Collection\Query;
 use Netgen\Layouts\Collection\QueryType\QueryTypeHandlerInterface;
@@ -177,9 +176,8 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
 
         $searchResult = $this->searchService->findLocations($locationQuery);
 
-        /** @var \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations */
         $locations = array_map(
-            static fn (SearchHit $searchHit): ValueObject => $searchHit->valueObject,
+            static fn (SearchHit $searchHit): Location => $searchHit->valueObject,
             $searchResult->searchHits,
         );
 
