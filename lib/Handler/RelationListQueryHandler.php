@@ -211,7 +211,7 @@ final class RelationListQueryHandler implements QueryTypeHandlerInterface
     /**
      * Sort given $locations as defined by the given $relatedContentIds.
      *
-     * @param int[]|string[] $relatedContentIds
+     * @param int[] $relatedContentIds
      * @param \Ibexa\Contracts\Core\Repository\Values\Content\Location[] $locations
      */
     private function sortLocationsByField(
