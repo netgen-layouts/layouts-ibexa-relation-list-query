@@ -16,10 +16,14 @@
     "require-dev": {
         "netgen/layouts-coding-standard": "^3.0",
         "phpstan/phpstan": "^2.1",
+        "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-strict-rules": "^2.0"
     },
     "config": {
-        "allow-plugins": false
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "*": false
+        }
     },
     "scripts": {
         "phpstan": "@php vendor/bin/phpstan analyse -c phpstan.neon --ansi"
