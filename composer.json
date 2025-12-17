@@ -22,7 +22,7 @@
         "allow-plugins": false
     },
     "scripts": {
-        "phpstan": "@php vendor/bin/phpstan analyse -c phpstan.neon --level=8 --ansi lib bundle"
+        "phpstan": "@php vendor/bin/phpstan analyse -c phpstan.neon --ansi"
     },
     "autoload": {
         "psr-4": {
